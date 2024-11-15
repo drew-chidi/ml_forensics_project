@@ -101,23 +101,46 @@ import pdb; pdb.set_trace()  # PDB breakpoint
 outputs = net(inputs)
 ```
 #### Step 2: Run the Script and Attach GDB
-Run the Python script in the terminal:
+Open the terminal in the directory you have your script and run the Python script:
 
 ```
-python3 cnn_cifar10.py
+gdb --args python3 your_script.py
 ```
-When PDB pauses, open a new terminal and find the PID:
+When the breakpoint is hit, use PDB commands to inspect objects and their fields. For example:
+```
+p id(variable_name)
+```
+This gives the memory location (in decimal). Convert it to hexadecimal using:
 
 ```
-ps aux | grep cnn_cifar10.py
+hex(id(variable_name))
 ```
-Attach GDB to the Python process:
+Use Ctrl+C to get access to gdb and figure out the PID by using the command:
+
 ```
-sudo gdb -p <PID>
+info proc
 ```
 
 
 [Screenshot Required: Show the PDB prompt in the first terminal and the GDB attachment in the second.]
+
+Explanation of info proc Output
+1. process 21416
+        This is the PID (Process ID) of the running Python process.
+        You can use this PID to identify and interact with the process in GDB or other tools (e.g., ps or top in Linux).
+
+2. cmdline = '/usr/bin/python3 cnn_cifar10.py'
+        This is the command line that was used to launch the process.
+        It tells you that the Python script cnn_cifar10.py is being run using /usr/bin/python3.
+        This is helpful if you want to ensure you're debugging the correct script or instance.
+
+3. cwd = '/home/andrew/Desktop/ml_forensics_project'
+        This is the current working directory (CWD) from where the Python script is being executed.
+        It's useful if you need to check the context of file paths, ensure your script is being run from the expected directory, or inspect files being loaded by the script.
+
+4. exe = '/usr/bin/python3.10'
+        This shows the executable file that is running the Python process. In this case, it's the Python 3.10 interpreter located at /usr/bin/python3.10.
+        This is helpful to know if you're running the intended version of Python and whether it's the expected environment for your script.
 
 ---
 
@@ -169,7 +192,9 @@ This step-by-step guide highlights both the complexity and the precision require
 
 
 ---
+### Troubleshooting tips
 
+---
 ### References
 
 1. https://sourceware.org/gdb/current/onlinedocs/gdb.pdf
