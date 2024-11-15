@@ -166,3 +166,10 @@ volatility -f /path/to/memdump.lime --profile=<LinuxProfile> memdump --pid=<PID>
 In this project, we have seen how memory forensics techniques can be applied to examine the active state of a machine learning model. By training a CNN, capturing its runtime state with LiME, and analyzing it with Volatility, we gain a practical understanding of how ML processes appear in memory. This kind of forensic investigation is invaluable in fields like cybersecurity, where identifying suspicious activity in memory can reveal threats that might not be visible otherwise.
 
 This step-by-step guide highlights both the complexity and the precision required in memory forensics. As we continue developing forensic analysis skills, investigating complex data structures within memory becomes an essential tool for understanding program behavior and system integrity.
+
+
+---
+
+### References
+
+1. https://sourceware.org/gdb/current/onlinedocs/gdb.pdf
