@@ -55,7 +55,6 @@ class SimpleCNN(nn.Module):
 net = SimpleCNN()
 ```
 
-
 2. **Load and Preprocess the Data:**
 Load CIFAR-10 and apply necessary transformations.
 
@@ -86,8 +85,7 @@ for epoch in range(2):
     	optimizer.step()
     	running_loss += loss.item()
 ```
-
-[Screenshot Required here]
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/jpgxfryztkyzudlo9prt.png)
 
 ---
 
@@ -120,9 +118,7 @@ Use Ctrl+C to get access to gdb and figure out the PID by using the command:
 ```
 info proc
 ```
-
-
-[Screenshot Required: Show the PDB prompt in the first terminal and the GDB attachment in the second.]
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/jfitobhyharvhc5aw1pm.png)
 
 Explanation of info proc Output
 1. process 21416
@@ -141,16 +137,57 @@ Explanation of info proc Output
 4. exe = '/usr/bin/python3.10'
         This shows the executable file that is running the Python process. In this case, it's the Python 3.10 interpreter located at /usr/bin/python3.10.
         This is helpful to know if you're running the intended version of Python and whether it's the expected environment for your script.
-
 ---
 
 ### Part 3: Capturing Memory with LiME
-1. **Load the LiME Kernel Module:**
-Use the following command to load LiME and save memory to a file:
+#### Step 1: Cloning and Setting Up LiME
+LiME (Linux Memory Extractor) is a Loadable Kernel Module (LKM) that allows you to dump memory from a live Linux system. Follow these steps to clone and build LiME:
+1. Clone the LiME GitHub repository:
 ```
-sudo insmod /path/to/lime-<version>.ko "path=/home/username/ml_forensics_project/memdump.lime format=lime"
+git clone https://github.com/504ensicsLabs/LiME.git
+cd LiME/src
 ```
-[Screenshot Required: Terminal output showing the insmod command successfully creating memdump.lime.]
+2. Build the LiME module:
+```
+make
+```
+3.Verify that the module has been built successfully:
+```
+ls -l lime*.ko
+```
+You should see a .ko file, which is the kernel module.
+
+4. Load the module and specify the output file for the memory dump. Replace /path/to/dump.lime with your desired output location:
+```
+sudo insmod /path/to/lime-<version>.ko path=/home/username/ml_forensics_project/memdump.lime format=lime
+```
+**Note:** You need root privileges to load the module.
+
+#### Step 2: Setting Up Volatility 3
+Volatility 3 is a powerful memory forensics framework. To get started:
+
+1. Clone the Volatility 3 repository and install its dependencies:
+```
+git clone https://github.com/volatilityfoundation/volatility3.git
+cd volatility3
+pip install -r requirements.txt
+```
+
+#### Step 3: Analyzing the Memory Image
+
+1. Inspecting the Memory Image: Start by determining the OS profile of the memory image. This step helps Volatility understand the memory layout. Use the linux.pslist plugin to inspect running processes:
+```
+python3 vol.py -f /path/to/dump.lime linux.pslist.PsList
+```
+**Note:** The command above should be run inside the volatility3 directory
+
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/d7gpv8faz1okvmk4uzpv.png)
+
+2. To get information about the VMAs of a particular process ID, take an ID from the running process and run this command:
+```
+python3 vol.py -f /path/to/dump.lime linux.proc.Map --pid <PID>
+```
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ck4lp6eu8671i5kif80b.png)
 
 ---
 
@@ -198,3 +235,4 @@ This step-by-step guide highlights both the complexity and the precision require
 ### References
 
 1. https://sourceware.org/gdb/current/onlinedocs/gdb.pdf
+2. https://volatility3.readthedocs.io/en/stable/basics.html
