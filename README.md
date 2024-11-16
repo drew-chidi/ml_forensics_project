@@ -142,7 +142,7 @@ Explanation of info proc Output
 ### Part 3: Capturing Memory with LiME
 #### Step 1: Cloning and Setting Up LiME
 LiME (Linux Memory Extractor) is a Loadable Kernel Module (LKM) that allows you to dump memory from a live Linux system. Follow these steps to clone and build LiME:
-1. Clone the LiME GitHub repository:
+1. with the script still running and at the breakpoint, clone the LiME GitHub repository:
 ```
 git clone https://github.com/504ensicsLabs/LiME.git
 cd LiME/src
