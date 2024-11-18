@@ -187,8 +187,7 @@ Note: The command above should be run inside the volatility3 directory
 ```
 python3 vol.py -f /path/to/mem_dump.lime linux.proc.Map --pid <PID>
 ```
-![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ck4lp6eu8671i5kif80b.png)
-
+![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/n2okqwrbytgvbltjh855.png)
 If the process is not listed or the command returns an empty table, it's likely because the dump file was not created while your Python script was running. To resolve this, delete the existing dump.Lime file, revisit step 2, and repeat the process carefully. You can check the troubleshooting section for other tips.
 
 ---
