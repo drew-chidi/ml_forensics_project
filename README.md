@@ -192,26 +192,9 @@ If the process is not listed or the command returns an empty table, it's likely 
 
 ---
 
-### Part 4: Analyzing the Memory Dump with Volatility
-With Volatility installed, we can inspect the memory image to locate and investigate the Python process.
-#### Step 1: Find the Python Process ID in Memory
-Use the pslist plugin to identify the Python process:
+### Part 4: Traversing Memory to Identify Python Objects
 
-```
-volatility -f /path/to/memdump.lime --profile=<LinuxProfile> pslist | grep python
-```
-[Screenshot Required: Show the output identifying the Python PID.]
-
-#### Step 2: Analyze VMAs and Symbol Tables
-1. Extract Virtual Memory Areas (VMAs) for the Python process:
-
-```
-volatility -f /path/to/memdump.lime --profile=<LinuxProfile> vma --pid=<PID>
-```
-
-2. Use the VMA output to locate where Python stores data related to its garbage collection.
-
-### Step 3: Traversing Memory to Identify Python Objects
+#### Step 1: 
 In this advanced step, we manually inspect the memory structure to locate objects managed by the Python garbage collector. We search for the _GC_Runtime_state structure and follow its pointers.
 1. Using Volatility’s memory commands, analyze the memory areas and follow pointers:
 
