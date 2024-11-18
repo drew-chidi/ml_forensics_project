@@ -10,20 +10,20 @@ In this post, we’ll explore how to apply memory forensics techniques to invest
 #### Step 1: Install Necessary Packages
 Before we dive into memory analysis, let’s start by setting up our environment and dependencies for building the CNN.
 
-1. **Install PyTorch and Torchvision:**
+1. Install PyTorch and Torchvision:
 
 ```
 pip3 install torch torchvision
 ```
 
-2. **Set Up the Project Folder:**
+2. Set Up the Project Folder:
 Organize all project files under a single directory called ml_forensics_project to keep everything manageable.
 
 
 #### Step 2: Building the CNN Model
-To classify images using the CIFAR-10 dataset, we’ll construct a custom CNN in PyTorch, a popular framework for deep learning.
+To classify images using the CIFAR-10 dataset, we’ll implement a custom CNN in PyTorch, a popular framework for deep learning.
 
-1. **Define the Network Architecture:** Create a Python script (e.g., cnn_cifar10.py) and define a simple CNN from scratch:
+1. Define the Network Architecture: Create a Python script (e.g., cnn_cifar10.py) and define a simple CNN from scratch:
 
 ```
 import torch
@@ -55,7 +55,7 @@ class SimpleCNN(nn.Module):
 net = SimpleCNN()
 ```
 
-2. **Load and Preprocess the Data:**
+2. Load and Preprocess the Data:
 Load CIFAR-10 and apply necessary transformations.
 
 
@@ -68,7 +68,7 @@ train_set = torchvision.datasets.CIFAR10(root='./data', train=True, download=Tru
 train_loader = torch.utils.data.DataLoader(train_set, batch_size=4, shuffle=True)
 ```
 
-3. **Train the CNN:**
+3. Train the CNN:
 Implement the training loop to train the model.
 ```
 criterion = nn.CrossEntropyLoss()
@@ -161,7 +161,7 @@ You should see a .ko file, which is the kernel module.
 ```
 sudo insmod /path/to/lime-<version>.ko path=/home/username/ml_forensics_project/memdump.lime format=lime
 ```
-**Note:** You need root privileges to load the module.
+Note: You need root privileges to load the module.
 
 #### Step 2: Setting Up Volatility 3
 Volatility 3 is a powerful memory forensics framework. To get started:
@@ -179,7 +179,7 @@ pip install -r requirements.txt
 ```
 python3 vol.py -f /path/to/dump.lime linux.pslist.PsList
 ```
-**Note:** The command above should be run inside the volatility3 directory
+Note: The command above should be run inside the volatility3 directory
 
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/d7gpv8faz1okvmk4uzpv.png)
 
@@ -202,17 +202,17 @@ volatility -f /path/to/memdump.lime --profile=<LinuxProfile> pslist | grep pytho
 [Screenshot Required: Show the output identifying the Python PID.]
 
 #### Step 2: Analyze VMAs and Symbol Tables
-1. **Extract Virtual Memory Areas (VMAs) for the Python process:**
+1. Extract Virtual Memory Areas (VMAs) for the Python process:
 
 ```
 volatility -f /path/to/memdump.lime --profile=<LinuxProfile> vma --pid=<PID>
 ```
 
-2. **Use the VMA output to locate where Python stores data related to its garbage collection.**
+2. Use the VMA output to locate where Python stores data related to its garbage collection.
 
 ### Step 3: Traversing Memory to Identify Python Objects
 In this advanced step, we manually inspect the memory structure to locate objects managed by the Python garbage collector. We search for the _GC_Runtime_state structure and follow its pointers.
-1. **Using Volatility’s memory commands, analyze the memory areas and follow pointers:**
+1. Using Volatility’s memory commands, analyze the memory areas and follow pointers:
 
 ```
 # Example memory inspection command in Volatility
