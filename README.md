@@ -1,6 +1,6 @@
 # Memory Forensics to Investigate Machine Learning: A Step-by-Step Guide
 
-#### Introduction
+### Introduction
 
 In this post, we’ll explore how to apply memory forensics techniques to investigate a running machine learning model. Memory forensics enables us to capture a snapshot of active memory to analyze program execution and state. For this project, we’ll focus on building and debugging a simple Convolutional Neural Network (CNN) and then capturing and analyzing it in memory using forensic tools. This post documents the step-by-step process to replicate and understand machine learning in memory forensics, complete with debugging techniques and forensic memory analysis.
 
@@ -93,7 +93,6 @@ for epoch in range(2):
 To capture specific states of the CNN, we’ll set up debugging breakpoints using Python Debugger (PDB) and GNU Debugger (GDB).
 #### Step 1: Insert a Breakpoint in the Code
 Add a line right before the forward pass to pause execution using PDB:
-
 ```
 import pdb; pdb.set_trace()  # PDB breakpoint
 outputs = net(inputs)
@@ -118,12 +117,12 @@ Use Ctrl+C to get access to gdb and figure out the PID by using the command:
 ```
 info proc
 ```
-Take note of your process ID as you will need it to get your VMAs of your python process when working with Volatility and LiME to perform a more in depth analysis.
+Take note of your process ID as you will need it to create a dump memory filee when working with Volatility and LiME to perform a more in-depth analysis.
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/jfitobhyharvhc5aw1pm.png)
 
 Explanation of info proc Output
 1. process 21416
-        This is the PID (Process ID) of the running Python process.
+        This is the PID (Process ID) of a running Python process.
         You can use this PID to identify and interact with the process in GDB or other tools (e.g., ps or top in Linux).
 
 2. cmdline = '/usr/bin/python3 cnn_cifar10.py'
@@ -156,16 +155,16 @@ make
 ```
 ls -l lime*.ko
 ```
-You should see a .ko file, which is the kernel module.
+You should see a .ko file, which is the kernel module with * representing the kernel version number.
 
-4. Load the module and specify the output file for the memory dump. Replace /path/to/dump.lime with your desired output location:
+4. Load the module and specify the output file for the memory dump. Replace /path/to/mem_dump.lime with your desired output location:
 ```
-sudo insmod /path/to/lime-<version>.ko path=/home/username/ml_forensics_project/memdump.lime format=lime
+sudo insmod /path/to/lime-<version>.ko path=/home/username/ml_forensics_project/mem_dump.lime format=lime
 ```
 Note: You need root privileges to load the module.
 
-#### Step 2: Setting Up Volatility 3
-Volatility 3 is a powerful memory forensics framework. To get started:
+#### Step 2: Setting Up Volatility3
+Volatility3 is a powerful memory forensics framework. To get started:
 
 1. Clone the Volatility 3 repository and install its dependencies:
 ```
@@ -184,9 +183,9 @@ Note: The command above should be run inside the volatility3 directory
 
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/d7gpv8faz1okvmk4uzpv.png)
 
-2. To get information about the VMAs of a particular process ID, take an ID from the running process and run the command below. In our case, our process ID is the ID of our Python3 process. If you didn't take note of the process ID from running the info proc on the GDB command line, you should look out for the python process as indicated in the image below.
+2. To get information about the VMAs of a particular process ID, take an ID from the running process and run the command below. In our case, our process ID is the ID of our Python3 process. If you didn't take note of the process ID from running the info proc on the GDB command line, you should look out for a python process as indicated in the image below.
 ```
-python3 vol.py -f /path/to/dump.lime linux.proc.Map --pid <PID>
+python3 vol.py -f /path/to/mem_dump.lime linux.proc.Map --pid <PID>
 ```
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ck4lp6eu8671i5kif80b.png)
 
