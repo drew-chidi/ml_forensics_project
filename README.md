@@ -118,6 +118,7 @@ Use Ctrl+C to get access to gdb and figure out the PID by using the command:
 ```
 info proc
 ```
+Take note of your process ID as you will need it to get your VMAs of your python process when working with Volatility and LiME to perform a more in depth analysis.
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/jfitobhyharvhc5aw1pm.png)
 
 Explanation of info proc Output
@@ -142,7 +143,7 @@ Explanation of info proc Output
 ### Part 3: Capturing Memory with LiME
 #### Step 1: Cloning and Setting Up LiME
 LiME (Linux Memory Extractor) is a Loadable Kernel Module (LKM) that allows you to dump memory from a live Linux system. Follow these steps to clone and build LiME:
-1. with the script still running and at the breakpoint, clone the LiME GitHub repository:
+1. With the script still running and at the breakpoint, clone the LiME GitHub repository:
 ```
 git clone https://github.com/504ensicsLabs/LiME.git
 cd LiME/src
@@ -183,11 +184,13 @@ Note: The command above should be run inside the volatility3 directory
 
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/d7gpv8faz1okvmk4uzpv.png)
 
-2. To get information about the VMAs of a particular process ID, take an ID from the running process and run this command:
+2. To get information about the VMAs of a particular process ID, take an ID from the running process and run the command below. In our case, our process ID is the ID of our Python3 process. If you didn't take note of the process ID from running the info proc on the GDB command line, you should look out for the python process as indicated in the image below.
 ```
 python3 vol.py -f /path/to/dump.lime linux.proc.Map --pid <PID>
 ```
 ![Image description](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ck4lp6eu8671i5kif80b.png)
+
+If the process is not listed or the command returns an empty table, it's likely because the dump file was not created while your Python script was running. To resolve this, delete the existing dump.Lime file, revisit step 2, and repeat the process carefully. You can check the troubleshooting section for other tips.
 
 ---
 
@@ -230,7 +233,35 @@ This step-by-step guide highlights both the complexity and the precision require
 
 ---
 ### Troubleshooting tips
+#### Tips for Creating a LiME Dump File
+1. The Kernel Module is Already Loaded
+If you see an error like:
+```
+insmod: ERROR: could not insert module <path_to_module>: File exists
+```
+This indicates the LiME kernel module is already loaded.
 
+Solution:
+
+Check if the module is currently loaded:
+```
+lsmod | grep lime
+```
+If listed, unload the module:
+```
+sudo rmmod lime
+```
+Reinsert the module:
+```
+sudo insmod /path/to/lime-<kernel-version>.ko path=/desired/path/to/dump.lime format=lime
+```
+2. File Size is Zero
+If the dump file is created but has a size of 0 bytes which can be caused by interruptions or disk space:
+
+Ensure there’s enough disk space on the target path:
+```
+df -h
+````
 ---
 ### References
 
