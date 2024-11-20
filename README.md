@@ -103,7 +103,7 @@ Open the terminal in the directory you have your script and run the Python scrip
 ```
 gdb --args python3 your_script.py
 
-#Then use the following command on the GDB prompt
+# Then use the following command on the GDB prompt
 run
 ```
 When the breakpoint is hit, use PDB commands to inspect objects and their fields. For example:
